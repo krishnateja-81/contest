@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Questions{% endblock title %}
+
+{% block body %}
+  {% if questions %}
+    {% for qno, question in questions.items %}
+      <p><a href="{% url 'home' qno=qno %}">{{ qno }}: {{ question }}</a></p>
+    {% endfor %}
+  {% else %}
+    <p>No questions available.</p>
+  {% endif %}
+{% endblock body %}

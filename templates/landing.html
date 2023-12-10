@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contest{% endblock title %}
+
+
+{% block body %}
+        <!-- width: 100%;
+        top: 10;
+        right: 10;
+        left: 10;
+        height: 417px; -->
+<style>
+    .abc{
+        position: absolute;
+        background-size: cover;
+        width:100%;
+        height: 40%;
+        background-repeat: no-repeat;
+        background-position: top;
+        font-size: var(--font-size-lg);
+        color: var(--color-white);
+    }
+</style>
+<h1 class="h1 text-center">Contest</h1>
+    <div class="abc" style="background-image: url('{% static 'image.png' %}');">
+        <div class="heading-1 text-center" style="padding-top:5rem; color:white; font-size:1.5rem;">Starts in:</div>
+        <div class="heading-5" style="text-align: center; justify-content:center;  color:white; font-size:2rem;" id="countdown">
+        </div>
+        <div class="button" style="padding-top:1rem;">
+        </div>
+      </div>
+      <div class="container" style="padding-top: 18rem;">
+        <h1>Instructions For Contest:</h1>
+        
+      </div>
+
+<script>
+    var countDownDate = new Date("{{ time }}").getTime();
+    
+    var x = setInterval(function() {
+    
+      var now = new Date().getTime();
+    
+      var distance = countDownDate - now;
+    
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+      document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+    
+
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("countdown").innerHTML = '<div class="button" style="padding-top:1rem;"><center><button class="sign-up btn btn-primary" style="text-align: center;" id="myButton"><a href="questions" style="text-decoration:none; color:white;">Enter Contest</a></button></center></div>';;
+        
+      }
+    }, 1000);
+    </script>
+{% endblock body %}

@@ -16,7 +16,7 @@ def user_login(request):
         if user is not None:
             login(request, user)
             request.session['username'] = uname
-            return redirect('home')
+            return redirect('questions')
 
         else:
             return redirect('register')
@@ -28,9 +28,9 @@ def register(request):
         fname = request.POST['fname']
         lname = request.POST['lname']
         pass1 = request.POST['password']
-        email = request.POST['email']
+        # email = request.POST['email']
         uname = request.POST['uname']
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(username=uname).exists():
             #print("email")
             values['emailerr'] = "email already exists."
             values['fname'] = fname
@@ -38,7 +38,7 @@ def register(request):
             userobj = User.objects.create_user(
                 username=uname,
                 password=pass1,
-                email=email,
+                # email=email,
                 first_name=fname,
                 last_name=lname
             )

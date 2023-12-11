@@ -3,17 +3,66 @@
 {% block title %}Questions{% endblock title %}
 
 {% block body %}
+<style>
+  .challenge-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+    cursor: pointer;
+  }
+
+  .challenge-card:hover {
+    transform: scale(1.01);
+  }
+
+  .challenge-description {
+    color: #555;
+  }
+
+  /* Responsive styling */
+  @media (max-width: 768px) {
+    .challenge-card {
+      padding: 10px;
+    }
+
+    .challenge-description {
+      font-size: 1.5rem;
+    }
+
+    span {
+      display: block;
+      margin-left: 0;
+    }
+
+    a {
+      margin-left: 0;
+      margin-top: 10px;
+      display: block;
+    }
+  }
+</style>
+
+<div class="container my-5">
+  <header>
+    <h1 class="text-center">Coding Contest</h1>
+  </header>
   {% if questions %}
     {% for qno, question in questions.items %}
-    <div class="container">
-    <div class="card my-5">
-    <div class="container my-3">
-      <p><a href="{% url 'home' qno=qno %}" style="text-decoration: none; font-size:2rem;" class="heading-5">{{ qno }}: {{ question }}</a></p>
-    </div>
-  </div>
-</div>
+      <div class="challenge-card">
+        <p class="challenge-description">
+          <div style="text-decoration: none; font-size: 2rem;" class="heading-5">{{ qno }}: {{ question }}</div>
+        </p>
+        <span><span style="color: grey;">Difficulty</span>: <span style="font-weight: bold;">Easy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span><span style="color:grey;">Max Score</span>: <span style="font-weight: bold;">20</span></span></span>
+        <div style="margin-left: 80%;">
+          <a href="{% url 'home' qno=qno %}" style="text-decoration: none; margin-right:10px;" class="btn btn-primary btn-md">Solve the challenge</a>
+        </div>
+      </div>
     {% endfor %}
   {% else %}
     <p>No questions available.</p>
   {% endif %}
+</div>
+</div>
+
 {% endblock body %}

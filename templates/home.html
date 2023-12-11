@@ -5,34 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>home</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  
+    <style>
+        #editorContainer {
+            height: 300px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container my-4">
+    <div class="container my-5">
+        <a href="{% url 'questions' %}" style="text-decoration: none;">Questions Page</a>
         <h1>{{ question }}</h1>
         <div class="card">
-            <b><p>Sample Input:{{ sinput }}</p>
-            <p>Sample Output:{{ soutput }}</p></b>
+            <b><p class="mf-3">Sample Input:{{ sinput }}</p>
+            <p class="mf-3">Sample Output:{{ soutput }}</p></b>
         </div>
     </div>
     <div class="container my-5">
 
-<form  method="post">
-        {% csrf_token %}
-    <textarea name="seed" id="codeArea" class="form-control"  rows="10" placeholder="enter code here...." >{{ code }}</textarea>
-        <button type="submit" class="btn btn-primary mt-5">submit</button>
-</form> 
-</div>
-<div class="container">
-    <h1>{{ output }}</h1>
-    <h1>TestCases:4: <br>Passed TestCases:{{ score }} <br> Not Passed TestCases:{{ fscore }}</h1>
-</div>
+        <form method="post" id="fraud">
+            {% csrf_token %}
+            
+            <div id="editorContainer">{{ code }}</div>
+            
+            <input type="hidden" name="seed" id="hiddenCode" value="{{ code|stringformat:'safeseed' }}">
+            
+            <button type="submit" class="btn btn-primary mt-5">Submit</button>
+        </form> 
+    </div>
+    <div class="container">
+        {% if output is not none%}
+        <div class="card">
+        <h1>Output:</h1>
+        <h3 style="padding: 10px;">{{ output }}</h3>
+    </div>
+{% endif %}
+        <h3><span style="color: blue;">Total Test Cases:4</span> <br><span style="color: green; padding-left:1rem;">Passed TestCases:{{ score }} </span> <span style="color: red;">Failed TestCases:{{ fscore }}</span></h3>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
 
+    <script>
+        // Initialize Ace Editor
+        var editor = ace.edit("editorContainer");
+        editor.getSession().setMode("ace/mode/python");
+
+        // Handle user input
+        editor.getSession().on('change', function () {
+            var code = editor.getSession().getValue();
+            // Update the hidden input field value
+            document.getElementById("hiddenCode").value = code;
+        });
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === "hidden") {
+              // The tab is shifted or minimized, submit the form
+              document.getElementById("fraud").submit();
+              window.location.href = "{% url 'fraud' %}"
+            }
+          });
+    </script>
 </body>
 </html>

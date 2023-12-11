@@ -9,17 +9,18 @@ users = User.objects.all()
 
 def user_login(request):
     if request.method == "POST":
-        uname = request.POST['uname']
+        uname = request.POST['uname'].upper()
         password = request.POST['password']
-
         user = authenticate(username = uname, password = password )
-        if user is not None:
-            login(request, user)
-            request.session['username'] = uname
-            return redirect('questions')
-
+        if models.fraud_model.objects.filter(username=uname).exists():
+            return redirect('fraud')
         else:
-            return redirect('register')
+            if user is not None :
+                login(request, user)
+                return redirect('landing')
+
+            else:
+                return redirect('register')
     return render(request, "login.html")
 
 def register(request):
@@ -28,17 +29,14 @@ def register(request):
         fname = request.POST['fname']
         lname = request.POST['lname']
         pass1 = request.POST['password']
-        # email = request.POST['email']
-        uname = request.POST['uname']
+        uname = request.POST['uname'].upper()
         if User.objects.filter(username=uname).exists():
-            #print("email")
             values['emailerr'] = "email already exists."
             values['fname'] = fname
         else:
             userobj = User.objects.create_user(
                 username=uname,
                 password=pass1,
-                # email=email,
                 first_name=fname,
                 last_name=lname
             )
@@ -64,20 +62,37 @@ def questions(request):
         l[i.qno] = i.question
     return render(request, 'questions.html', {'questions': l})
 
+@login_required
+def leaderboard(request):
+    
+    leaderboard_entries = models.score.objects.all().order_by('-score')[:10] 
+    return render(request, 'leaderboard.html', {'leaderboard_entries': leaderboard_entries})
 
+
+
+def fraud(request):
+    
+    uname = request.user
+    if uname is not None:
+        fraud_user = models.fraud_model.objects.get_or_create(
+            username = uname,
+            fraud = True
+        )
+        logout(request)
+    return render(request, 'fraud.html')
 @login_required
 def home(request, qno=None):
     uname = request.user
-    print(uname)
+    # print(uname)
     qno = qno
     qs_str = f"question{qno}"
-    question = models.Questions.objects.get(qno=qno)
-    user_score = models.score.objects.get(uname = uname)
+    question = models.Questions.objects.get(qno = qno)
+    try:
+        user_score = models.score.objects.get(uname = uname)
+    except:
+        models.score.objects.create(uname = uname)   
+        user_score = models.score.objects.get(uname = uname)
     max_score = getattr(user_score, qs_str, None)
-    # print(max_score, type(max_score))
-    # print(user_question)
-    # print(score.qs)
-    # print(qno) a = f"question{qno}"
     code = ""
     obj = {}
     qs = []
@@ -102,25 +117,18 @@ def home(request, qno=None):
         test_input = test_cases[i]
 
         output = evaluate_submission(submission_path, test_input)
-        # obj['output'] = output
-        # print(f"Output: {output}")
         if str(output) == str(test_output[i]):
             score += 1
     soutput = evaluate_submission(submission_path, question.sinpu)
     obj['output'] = soutput
     obj['score'] = score
     obj['fscore'] = 4 - score
-    # print(score)
     if max_score is None or score > max_score:
         setattr(user_score, qs_str, score)
         user_score.save()
     
     return render(request, 'home.html', obj)
 
-
-# for i in test:
-#     print(i.inpu)
-#     print(i.outpu)
 
 import subprocess
 
@@ -131,13 +139,5 @@ def evaluate_submission(submission_path, test_input):
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
 
-# if __name__ == "__main__":
-#     for i in test:
-        
-#         submission_path = r'C:\Users\Admin\seed\code.py'
-#         test_input = i.inpu
-
-#         output = evaluate_submission(submission_path, test_input)
-#         print(f"Output: {output}")
     
     

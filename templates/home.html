@@ -15,6 +15,7 @@
 <body>
 
     <div class="container my-5">
+        <div class="fake"></div>
         <a href="{% url 'questions' %}" style="text-decoration: none;">Questions Page</a>
         <h1>{{ question }}</h1>
         <div class="card">
@@ -61,12 +62,20 @@
             // Update the hidden input field value
             document.getElementById("hiddenCode").value = code;
         });
-
+        var count = 0
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "hidden") {
               // The tab is shifted or minimized, submit the form
+              
+              if (count == 0){
+                window.alert("if you change the tab again...you will get blocked from this site")
+                document.getElementById("fake").innerHTML = "if you change the tab again...you will get blocked from this site"
+              }
+              count+=1;
+              if (count>1){
               document.getElementById("fraud").submit();
               window.location.href = "{% url 'fraud' %}"
+              }
             }
           });
     </script>

@@ -5,7 +5,13 @@
 {% block body %}
   {% if questions %}
     {% for qno, question in questions.items %}
-      <p><a href="{% url 'home' qno=qno %}">{{ qno }}: {{ question }}</a></p>
+    <div class="container">
+    <div class="card my-5">
+    <div class="container my-3">
+      <p><a href="{% url 'home' qno=qno %}" style="text-decoration: none; font-size:2rem;" class="heading-5">{{ qno }}: {{ question }}</a></p>
+    </div>
+  </div>
+</div>
     {% endfor %}
   {% else %}
     <p>No questions available.</p>

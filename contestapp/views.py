@@ -64,55 +64,20 @@ def questions(request):
         l[i.qno] = i.question
     return render(request, 'questions.html', {'questions': l})
 
-# @login_required
-# def home(request, qno=None):
-#     qno = qno
-#     test = models.Questions.objects.get(qno = qno)
-#     print(qno)
-#     code = ""
-#     obj={}
-#     qs = []
-#     for i in test:
-#         qs.append(i.question)
-    
-#     obj['question'] = qs[qno-1]
-#     if request.method == "POST":
-#         code = request.POST['seed']
-#         obj['code'] = code
-#         # print(code)
-#     score = 0
-#     test_cases = []
-#     test_output = []
-#     for i in test:
-#         test_cases.append(i.inpu)
-#         test_output.append(i.outpu)
-#         test_cases.append(i.inpu2)
-#         test_output.append(i.outpu2)
-#         test_cases.append(i.inpu3)
-#         test_output.append(i.outpu3)
-#         test_cases.append(i.inpu4)
-#         test_output.append(i.outpu4)
-
-#     for i in test:
-#         for j in range(4):
-#             submission_path = f'''{code}'''
-#             test_input = test_cases[j]
-
-#             output = evaluate_submission(submission_path, test_input)
-#             obj['output'] = output
-#             # print(f"Output: {output}")
-#             if str(output) == str(test_output[j]):
-#                 score+=1
-#     obj['score'] = score
-#     # print(score)
-    
-#     return render(request, 'home.html', obj)
 
 @login_required
 def home(request, qno=None):
+    uname = request.user
+    print(uname)
     qno = qno
+    qs_str = f"question{qno}"
     question = models.Questions.objects.get(qno=qno)
-    # print(qno)
+    user_score = models.score.objects.get(uname = uname)
+    max_score = getattr(user_score, qs_str, None)
+    # print(max_score, type(max_score))
+    # print(user_question)
+    # print(score.qs)
+    # print(qno) a = f"question{qno}"
     code = ""
     obj = {}
     qs = []
@@ -146,6 +111,9 @@ def home(request, qno=None):
     obj['score'] = score
     obj['fscore'] = 4 - score
     # print(score)
+    if max_score is None or score > max_score:
+        setattr(user_score, qs_str, score)
+        user_score.save()
     
     return render(request, 'home.html', obj)
 

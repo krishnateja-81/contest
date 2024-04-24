@@ -23,7 +23,7 @@ This Django project is a web-based application designed to manage user authentic
 
 1. **Clone the Repository:**
    ```
-   git clone [[repository_url](https://github.com/krishnateja-81/contest)]
+   git clone [(https://github.com/krishnateja-81/contest)]
    ```
 
 2. **Create a Virtual Environment (optional but recommended):**
